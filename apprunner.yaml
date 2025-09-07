@@ -5,8 +5,6 @@ build:
   commands:
     pre-build:
       - npm ci --omit=dev
-    build:
-      - echo "no build step"
 
 run:
   runtime-version: 20
