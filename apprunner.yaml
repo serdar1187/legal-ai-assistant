@@ -1,11 +1,11 @@
 version: 1.0
-runtime: docker
+runtime: nodejs18
 build:
   commands:
     build:
-      - echo "Building with Docker"
+      - npm install
 run:
-  runtime-version: latest
+  runtime-version: 18
   command: npm start
   network:
     port: 8080
