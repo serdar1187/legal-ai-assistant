@@ -70,7 +70,8 @@
 
     <script>
       // ---- Demo-only gate (client-side). Do NOT use for real auth. ----
-      const EXPECTED_SHA256_HEX = 'e464c27aefe397d686ffc6588a9709bd79cb2535d52c1c4e989cf6a0b25b791e'; // sha256('TRlegal20801')
+// sha256('TRlegal20801')
+const EXPECTED_SHA256_HEX = 'e464c27aefe397d686ffc6588a9709bd79cb2535d52c1c4e989cf6a0b25b791e';
 
       const $ = (s)=>document.querySelector(s);
       const form = $('#loginForm');
@@ -113,14 +114,14 @@
         if (attempts >= MAX_ATTEMPTS) { err.textContent = 'Too many attempts. Please refresh and try again later.'; return; }
         submitBtn.disabled = true;
         try {
-          const hash = await sha256Hex(pwd.value);
+          const hash = await sha256Hex(pwd.value.trim());
           if (hash === EXPECTED_SHA256_HEX) {
             const storage = remember.checked ? localStorage : sessionStorage;
             storage.setItem('authenticated', 'true');
             // Keep both for compatibility with older checks
             localStorage.setItem('authenticated', 'true');
             sessionStorage.setItem('authenticated', 'true');
-            location.href = 'index.html';
+            location.replace('index.html');
           } else {
             attempts++; err.textContent = 'Incorrect password.'; pwd.select();
           }
