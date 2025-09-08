@@ -1,33 +1,49 @@
-const messages = document.getElementById('messages');
-const form = document.getElementById('composer');
-const input = document.getElementById('messageInput');
-const sendBtn = document.getElementById('sendBtn');
+// Chat.js — Amplify AI wiring (English version)
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/api';
+import outputs from '../amplify_outputs.json';
 
-function appendMessage(text, who = 'user') {
-  const bubble = document.createElement('div');
-  bubble.className = `msg msg--${who}`;
-  bubble.textContent = text;
-  messages.appendChild(bubble);
-  messages.scrollTop = messages.scrollHeight;
-}
+Amplify.configure(outputs);
+const client = generateClient();
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
+/**
+ * Send the message from the input using Amplify AI
+ * Assumes you have a global addMessage(text, who) helper.
+ */
+export async function sendMessage() {
+  const input = document.getElementById('messageInput');
+  const text = input?.value?.trim() ?? '';
   if (!text) return;
 
-  appendMessage(text, 'user');
+  // Show user message
+  addMessage(text, 'user');
   input.value = '';
-  input.focus();
-  sendBtn.disabled = true;
 
   try {
-    // Demo response
-    await new Promise(r => setTimeout(r, 600));
-    appendMessage('This is a demo response. Real analysis will be returned when connected to backend.', 'bot');
-  } catch (err) {
-    appendMessage('An error occurred. Please try again.', 'bot');
-  } finally {
-    sendBtn.disabled = false;
+    // Get response from Amplify AI
+    const res = await client.conversations.chat({
+      content: [{ text }]
+    });
+
+    // Safely pick the first text chunk
+    const botText =
+      (Array.isArray(res?.content) &&
+        res.content.find(c => typeof c?.text === 'string')?.text) ||
+      'Sorry, I could not generate a response.';
+
+    // Show bot reply
+    addMessage(botText, 'bot');
+  } catch (error) {
+    console.error('Error:', error);
+    addMessage('Sorry, something went wrong. Please try again.', 'bot');
   }
-});
+}
+
+// Optional: wire up a form submit handler (if you use a <form id="composer">)
+const composer = document.getElementById('composer');
+if (composer) {
+  composer.addEventListener('submit', (e) => {
+    e.preventDefault();
+    sendMessage();
+  });
+}
