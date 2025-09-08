@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Legal AI Assistant chat interface" />
+    <title>Legal AI Assistant</title>
+    <link rel="stylesheet" href="chat.css" />
+    <style>
+      /* If this isn't already in chat.css, you can move it there */
+      .sr-only {
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🏛️ Legal AI Assistant</h1>
+      </header>
+
+      <main class="chat-container">
+        <!-- Accessibility: role=log + aria-live -->
+        <div
+          id="messages"
+          class="messages"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="Chat messages">
+        </div>
+
+        <!-- Use form submit instead of onclick -->
+        <form id="composer" class="input-container" autocomplete="off">
+          <label class="sr-only" for="messageInput">Message</label>
+          <input
+            type="text"
+            id="messageInput"
+            name="message"
+            placeholder="Type your legal question…"
+            enterkeyhint="send"
+            required />
+          <button id="sendBtn" type="submit">Send</button>
+        </form>
+      </main>
+    </div>
+
+    <!-- Module scripts already behave like defer -->
+    <script type="module" src="chat.js"></script>
+  </body>
+</html>
