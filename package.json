@@ -3,11 +3,20 @@
   "version": "1.0.0",
   "description": "Legal AI Assistant",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "amplify build",
+    "dev": "amplify sandbox"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "@aws-amplify/backend": "^1.0.0",
+    "@aws-amplify/backend-cli": "^1.0.0",
+    "aws-amplify": "^6.0.0"
+  },
+  "devDependencies": {
+    "@aws-amplify/backend-cli": "^1.0.0"
   },
   "engines": {
     "node": "22.x"
