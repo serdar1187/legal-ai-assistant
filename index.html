@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Legal document analysis assistant demo UI" />
     <meta name="color-scheme" content="light dark" />
-    <title>Legal Assistant</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <title>Legal AI Assistant</title>
     <style>
       :root {
         --bg-start: #667eea; --bg-end: #764ba2; --surface: #ffffff;
@@ -32,20 +33,20 @@
       .btn-primary{width:100%;font-size:1.05rem;background:linear-gradient(45deg,#667eea,#764ba2);color:#fff;box-shadow:0 8px 16px rgba(0,0,0,.18)}
       .btn-primary:hover{transform:translateY(-1px)}
       .response{margin-top:18px;padding:18px;border:1px solid var(--border);background:color-mix(in oklab,var(--surface) 85%, #10b981 7%);border-left:6px solid var(--success);border-radius:12px}
-      .loading{display:inline-flex;gap:10px;align-items:center;color:#6b7280}
+      .loading{display:inline-flex;gap:10px;align-items:center;color:var(--muted)}
       .spinner{width:18px;height:18px;border-radius:50%;border:3px solid currentColor;border-right-color:transparent;animation:spin .7s linear infinite}
       @keyframes spin{to{transform:rotate(360deg)}}
       @media (prefers-reduced-motion:reduce){.btn{transition:none}.spinner{animation:none}}
     </style>
   </head>
-  <!-- Hide body to prevent flicker before auth check -->
+
+  <!-- Auth kontrolünden önce flicker'ı önlemek için body gizli -->
   <body style="display:none">
     <script>
       (function(){
         try {
           var authed = sessionStorage.getItem('authenticated') === 'true' || localStorage.getItem('authenticated') === 'true';
           if (!authed) { window.location.replace('./login.html'); return; }
-          // If authed, reveal body
           document.body.style.display = '';
         } catch (e) { document.body.style.display = ''; }
       })();
@@ -57,63 +58,18 @@
       </header>
 
       <main class="card">
-        <form id="form" novalidate>
-          <label class="sr-only" for="question">Question</label>
-          <textarea id="question" name="question" placeholder="" maxlength="1000" required></textarea>
-          <button id="analyzeBtn" class="btn btn-primary" type="submit">🚀 Analyze</button>
-        </form>
-
-        <section id="response" class="response" role="region" aria-live="polite" aria-busy="false" hidden>
-          <div id="responseContent"></div>
-        </section>
+        <!-- React/Vite uygulaması buraya mount edilir -->
+        <div id="root">
+          <noscript>
+            <section class="response" aria-live="polite">
+              JavaScript devre dışı. Uygulamayı kullanmak için JavaScript’i etkinleştirin.
+            </section>
+          </noscript>
+        </div>
       </main>
     </div>
 
-    <script>
-      const $ = (sel) => document.querySelector(sel);
-      const form = $('#form');
-      const questionEl = $('#question');
-      const analyzeBtn = $('#analyzeBtn');
-      const response = $('#response');
-      const responseContent = $('#responseContent');
-
-      // Submit: Ctrl/Cmd + Enter
-      questionEl.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') form.requestSubmit();
-      });
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (!questionEl.value.trim()) { questionEl.reportValidity(); return; }
-        analyzeBtn.disabled = true;
-        response.hidden = false;
-        response.setAttribute('aria-busy', 'true');
-        responseContent.innerHTML = '';
-        const loading = document.createElement('div');
-        loading.className = 'loading';
-        loading.innerHTML = '<span class="spinner" aria-hidden="true"></span><span>🤖 Analyzing…</span>';
-        responseContent.appendChild(loading);
-
-        try {
-          const userQuestion = questionEl.value;
-          await new Promise((res)=>setTimeout(res, 900));
-          responseContent.innerHTML = '';
-
-          const summary = document.createElement('p');
-          summary.textContent = 'Demo: connect a backend (e.g., AWS Bedrock Agent) to analyze your text.';
-          const echo = document.createElement('blockquote');
-          echo.style.margin = '8px 0 0';
-          echo.style.whiteSpace = 'pre-wrap';
-          echo.textContent = userQuestion;
-          responseContent.append(summary, echo);
-        } catch {
-          responseContent.textContent = 'Something went wrong. Please try again.';
-          responseContent.style.color = 'crimson';
-        } finally {
-          analyzeBtn.disabled = false;
-          response.setAttribute('aria-busy', 'false');
-        }
-      });
-    </script>
+    <!-- Vite/React giriş noktası -->
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
